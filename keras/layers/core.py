@@ -968,3 +968,32 @@ class ActivityRegularization(Layer):
 
     def compute_output_shape(self, input_shape):
         return input_shape
+
+
+class GradientReversal(Layer):
+    '''
+    Flip the sign of gradient during training.
+
+    # Arguments:
+        hp_lambda: Scalar to multiply the flipped gradient.
+    '''
+    def __init__(self, hp_lambda, **kwargs):
+        super(GradientReversal, self).__init__(**kwargs)
+        self._hp_lambda = hp_lambda
+        self.hp_lambda = K.variable(hp_lambda)
+        self.supports_masking = False
+        self.op = K.ReverseGradient(self.hp_lambda)
+
+    def build(self, input_shape):
+        self.trainable_weights = []
+
+    def call(self, x, mask=None):
+        return self.op(x)
+
+    def get_output_shape_for(self, input_shape):
+        return input_shape
+
+    def get_config(self):
+        config = {'hp_lambda': self._hp_lambda}
+        base_config = super(GradientReversal, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))

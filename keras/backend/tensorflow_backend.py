@@ -4707,3 +4707,29 @@ def local_conv2d(inputs,
     else:
         output = permute_dimensions(output, (2, 0, 1, 3))
     return output
+
+
+class ReverseGradient(object):
+    num_calls = 0
+    '''Flips the sign of incoming gradient during training.'''
+    def __init__(self, hp_lambda):
+
+        self.hp_lambda = hp_lambda
+
+    def __call__(self, x):
+        grad_name = "GradientReversal%d" % ReverseGradient.num_calls
+
+        @tf.RegisterGradient(grad_name)
+        def _flip_gradients(op, grad):
+            return [tf.subtract(0.0, grad) * self.hp_lambda]
+
+        g = get_session().graph
+        with g.gradient_override_map({'Identity': grad_name}):
+            y = tf.identity(x)
+
+        ReverseGradient.num_calls += 1
+        return y
+
+
+def test_funct():
+    do_nothing()
