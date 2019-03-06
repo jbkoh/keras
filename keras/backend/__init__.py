@@ -147,6 +147,7 @@ from .load_backend import local_conv2d
 from .load_backend import backend
 from .load_backend import normalize_data_format
 from .load_backend import name_scope
+from .load_backend import ReverseGradient
 
 if backend() == 'theano':
     from .load_backend import pattern_broadcast
