@@ -36,6 +36,7 @@ from .core import Masking
 from .core import SpatialDropout1D
 from .core import SpatialDropout2D
 from .core import SpatialDropout3D
+from .core import GradientReversal
 
 from .convolutional import Conv1D
 from .convolutional import Conv2D

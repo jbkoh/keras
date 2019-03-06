@@ -29,7 +29,7 @@ from ..utils.generic_utils import to_list
 from ..utils.generic_utils import unpack_singleton
 from ..legacy import interfaces
 
-def check_array_lengths(X, Y, W):
+def do_check_array_lengths(X, Y, W):
     x_lengths = [x.shape[0] for x in X]
     y_lengths = [y.shape[0] for y in Y]
     w_lengths = [w.shape[0] for w in W]
@@ -1224,7 +1224,9 @@ class Model(Network):
 
     def train_on_batch(self, x, y,
                        sample_weight=None,
-                       class_weight=None):
+                       class_weight=None,
+                       check_array_lengths=True,
+                       ):
         """Runs a single gradient update on a single batch of data.
 
         # Arguments
@@ -1262,7 +1264,9 @@ class Model(Network):
         x, y, sample_weights = self._standardize_user_data(
             x, y,
             sample_weight=sample_weight,
-            class_weight=class_weight)
+            class_weight=class_weight,
+            check_array_lengths=check_array_lengths,
+        )
         if self._uses_dynamic_learning_phase():
             ins = x + y + sample_weights + [1.]
         else:
